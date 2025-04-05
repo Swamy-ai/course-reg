@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4">Courses</h2>
+
+    
+    <form method="post" class="border p-4 rounded mb-5 bg-light">
+        {% csrf_token %}
+        <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <label class="form-label">Course Name</label>
+                <input type="text" name="course_name" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Course Code</label>
+                <input type="text" name="course_code" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Offered By (Faculty)</label>
+                <select name="offered_by" class="form-select" required>
+                    <option value="">Select</option>
+                    {% for faculty in faculty_users %}
+                        <option value="{{ faculty.id }}">{{ faculty.username }} ({{ faculty.role }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-grid">
+                <label class="form-label invisible">Submit</label>
+                <button type="submit" class="btn btn-outline-secondary">Add Course</button>
+            </div>
+        </div>
+    </form>
+
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Course Code</th>
+                <th>Offered By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.course_name }}</td>
+                <td>{{ course.course_code }}</td>
+                <td>{{ course.offered_by.username }}</td>
+                <td>
+                    <form action="{% url 'delete_course' course.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No courses available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

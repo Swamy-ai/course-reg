@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}My Courses{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4">My Registered Courses</h2>
+    <ul class="list-group mb-4">
+        {% for reg in registered_courses %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ reg.course.course_name }} ({{ reg.course.course_code }})
+                <span class="badge bg-secondary">{{ reg.registration_date|date:"M d, Y" }}</span>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">No courses registered yet.</li>
+        {% endfor %}
+    </ul>
+
+    {% if registered_courses|length < 2 %}
+        <h4 class="mb-3">Register for a New Course</h4>
+        <form method="post" class="row g-3">
+            {% csrf_token %}
+            <div class="col-md-6">
+                <select class="form-select" name="course_id" required>
+                    <option value="" disabled selected>-- Select a Course --</option>
+                    {% for course in available_courses %}
+                        <option value="{{ course.id }}">{{ course.course_name }} ({{ course.course_code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-secondary">Register</button>
+            </div>
+        </form>
+    {% else %}
+        <div class="alert alert-warning mt-4">
+            You have already registered for the maximum of 2 courses.
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="alert alert-danger mt-3">{{ error }}</div>
+    {% endif %}
+</div>
+{% endblock %}
